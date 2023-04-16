@@ -1,6 +1,5 @@
-package com.remreren.urlshortenerapp;
+package com.remreren.urlshortenerapp.redirect;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -8,19 +7,25 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping
-public class ShortUrlRedirectController {
+public class RedirectController {
 
-    private final ShortLinkService shortLinkService;
+    private final RedirectService shortLinkService;
 
-    public ShortUrlRedirectController(ShortLinkService shortLinkService) {
+    public RedirectController(RedirectService shortLinkService) {
         this.shortLinkService = shortLinkService;
     }
 
     @GetMapping("/{shortLink}")
     public ResponseEntity<?> redirect(@PathVariable("shortLink") Long shortLink, HttpServletResponse response) {
         var link = shortLinkService.getShortLink(shortLink);
-        response.addHeader("Location", link.getLongLink());
-        return new ResponseEntity<>(HttpStatusCode.valueOf(302));
+
+        if (link.getActive()) {
+            response.addHeader("Location", link.getLongLink());
+            return new ResponseEntity<>(HttpStatusCode.valueOf(302));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
 }

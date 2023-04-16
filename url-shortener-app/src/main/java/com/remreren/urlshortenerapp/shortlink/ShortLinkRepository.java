@@ -1,4 +1,4 @@
-package com.remreren.urlshortenerapp;
+package com.remreren.urlshortenerapp.shortlink;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
